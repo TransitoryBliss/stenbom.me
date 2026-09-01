@@ -3,9 +3,9 @@
 Robert Stenbom's personal site — a short about page and a technical blog. Built with
 [Astro](https://astro.build), deployed to GitHub Pages.
 
-Ink-on-paper light theme by default, gruvbox dark via the `[dark]` toggle in the nav. Set in
-[iA Writer Quattro](https://github.com/iaolo/iA-Fonts) for prose and iA Writer Mono for
-headings, nav and code, both self-hosted from `public/fonts/`.
+Set in [Source Serif 4](https://github.com/adobe-fonts/source-serif) (self-hosted via
+Fontsource), light by default with a Dark toggle in the nav. Posts show reading time, a table
+of contents on longer posts, and previous/next links.
 
 ## Local development
 

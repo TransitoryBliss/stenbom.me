@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { readingTime } from '../../lib/readingTime';
 
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.date.valueOf() - a.data.date.valueOf()
@@ -15,13 +16,17 @@ const posts = (await getCollection('blog')).sort(
 			posts.map((post) => (
 				<li>
 					<a href={`/blog/${post.id}/`}>{post.data.title}</a>
-					<time datetime={post.data.date.toISOString()}>
-						{post.data.date.toLocaleDateString('en-GB', {
-							year: 'numeric',
-							month: 'long',
-							day: 'numeric',
-						})}
-					</time>
+					<span class="post-meta">
+						<time datetime={post.data.date.toISOString()}>
+							{post.data.date.toLocaleDateString('en-GB', {
+								year: 'numeric',
+								month: 'long',
+								day: 'numeric',
+							})}
+						</time>
+						{' · '}{readingTime(post.body)} min read
+					</span>
+					<p>{post.data.description}</p>
 				</li>
 			))
 		}

@@ -1,34 +1,73 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { readingTime } from '../../lib/readingTime';
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog');
-	return posts.map((post) => ({
+	const posts = (await getCollection('blog')).sort(
+		(a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+	);
+	return posts.map((post, i) => ({
 		params: { slug: post.id },
-		props: { post },
+		props: { post, newer: posts[i - 1], older: posts[i + 1] },
 	}));
 }
 
-const { post } = Astro.props;
-const { Content } = await render(post);
+const { post, newer, older } = Astro.props;
+const { Content, headings } = await render(post);
+const sections = headings.filter((h) => h.depth === 2);
+const showToc = sections.length >= 3;
+const minutes = readingTime(post.body);
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description}>
 	<article>
 		<header class="post-header">
 			<h1>{post.data.title}</h1>
-			<time datetime={post.data.date.toISOString()}>
-				{
-					post.data.date.toLocaleDateString('en-GB', {
-						year: 'numeric',
-						month: 'long',
-						day: 'numeric',
-					})
-				}
-			</time>
+			<span class="post-meta">
+				<time datetime={post.data.date.toISOString()}>
+					{
+						post.data.date.toLocaleDateString('en-GB', {
+							year: 'numeric',
+							month: 'long',
+							day: 'numeric',
+						})
+					}
+				</time>
+				{' · '}{minutes} min read
+			</span>
 		</header>
+		{
+			showToc && (
+				<nav class="toc" aria-label="Contents">
+					<p class="toc-title">Contents</p>
+					<ol>
+						{sections.map((h) => (
+							<li>
+								<a href={`#${h.slug}`}>{h.text}</a>
+							</li>
+						))}
+					</ol>
+				</nav>
+			)
+		}
 		<Content />
 	</article>
-	<p><a href="/blog/">&larr; Back to all posts</a></p>
+	<nav class="post-nav" aria-label="Post navigation">
+		{
+			older && (
+				<a href={`/blog/${older.id}/`}>
+					<span class="label">&larr; Older:</span> {older.data.title}
+				</a>
+			)
+		}
+		{
+			newer && (
+				<a href={`/blog/${newer.id}/`}>
+					<span class="label">Newer:</span> {newer.data.title} &rarr;
+				</a>
+			)
+		}
+		<a href="/blog/">All posts</a>
+	</nav>
 </BaseLayout>

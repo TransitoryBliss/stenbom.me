@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Playwright CLI snapshots written during local browser checks
+.playwright-cli/

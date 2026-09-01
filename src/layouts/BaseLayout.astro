@@ -1,5 +1,7 @@
 ---
 import Nav from '../components/Nav.astro';
+import '@fontsource-variable/source-serif-4/opsz.css';
+import '@fontsource-variable/source-serif-4/opsz-italic.css';
 import '../styles/global.css';
 
 interface Props {
@@ -20,20 +22,6 @@ const pageTitle = title === 'stenbom.me' ? title : `${title} · stenbom.me`;
 			document.documentElement.dataset.theme =
 				localStorage.getItem('theme') === 'dark' ? 'dark' : 'light';
 		</script>
-		<link
-			rel="preload"
-			href="/fonts/iAWriterQuattroS-Regular.woff2"
-			as="font"
-			type="font/woff2"
-			crossorigin
-		/>
-		<link
-			rel="preload"
-			href="/fonts/iAWriterMonoS-Regular.woff2"
-			as="font"
-			type="font/woff2"
-			crossorigin
-		/>
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="description" content={description} />
 		<meta name="generator" content={Astro.generator} />
