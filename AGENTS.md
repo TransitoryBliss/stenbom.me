@@ -6,8 +6,8 @@ change the site safely.
 ## What this repo is
 
 Robert's personal site: an About page and a technical blog. Built with
-[Astro](https://astro.build), styled with one handwritten stylesheet (gruvbox colours,
-iA Writer typefaces), deployed to GitHub Pages at `stenbom.me`.
+[Astro](https://astro.build), styled with one handwritten stylesheet (ink-on-paper light theme,
+gruvbox dark theme, iA Writer typefaces), deployed to GitHub Pages at `stenbom.me`.
 
 ## Layout
 
@@ -21,7 +21,7 @@ iA Writer typefaces), deployed to GitHub Pages at `stenbom.me`.
 | `src/layouts/BaseLayout.astro` | Shared HTML shell: nav, `<slot />`, footer. Holds the inline `<head>` script that sets `data-theme` before first paint, and the font preload. |
 | `src/components/Nav.astro` | Site nav (Home, Blog) plus the `[light]`/`[dark]` theme toggle and its script. |
 | `src/styles/global.css` | The one stylesheet. Gruvbox palette as CSS variables, `@font-face` for iA Writer Quattro (prose) and Mono (structure/code), Shiki dual-theme selectors. No framework. |
-| `astro.config.mjs` | Sets Shiki to dual themes `gruvbox-dark-hard` / `gruvbox-light-hard` with `defaultColor: false`. |
+| `astro.config.mjs` | Sets Shiki to dual themes `github-light` / `gruvbox-dark-hard` with `defaultColor: false`. |
 | `public/fonts/` | Self-hosted iA Writer Quattro and Mono woff2 files (Regular, Bold, Italic, BoldItalic each) and their SIL OFL licences. Keep the licence files next to the fonts. |
 | `public/CNAME` | Custom domain for GitHub Pages (`stenbom.me`). Don't remove. |
 | `.github/workflows/deploy.yml` | Builds with `withastro/action` and deploys via `actions/deploy-pages` on push to `main`. |
@@ -60,11 +60,13 @@ and post route both read from the collection automatically.
   wall of text. Line height stays inside Butterick's 120–145% range (plus a little for
   Quattro's tall x-height). The measure is in `rem`, not `ch`, so it doesn't shrink for
   elements with a smaller font-size.
-- Theme: dark (gruvbox-dark-hard) is always the default, regardless of OS preference. Light
-  (gruvbox-light-hard) is opted into via `data-theme="light"` on `<html>`, chosen with the
-  nav toggle and remembered in `localStorage` under the key `theme`. Colours live as
-  variables on `:root` (dark) and `html[data-theme='light']` in `global.css` — change
-  values there, not in components.
+- Theme: light ("ink on paper": near-black on faint off-white) is always the default,
+  regardless of OS preference. Dark text on a light background reads measurably better for
+  prose (Piepenbrock et al., *Ergonomics* 2013/2014, the "positive polarity advantage"), so
+  don't flip the default back to dark. Dark (gruvbox-dark-hard) is opted into via
+  `data-theme="dark"` on `<html>`, chosen with the nav toggle and remembered in
+  `localStorage` under the key `theme`. Colours live as variables on `:root` (light) and
+  `html[data-theme='dark']` in `global.css` — change values there, not in components.
 - The only client-side JS is the theme handling: an `is:inline` script in the `<head>` of
   `BaseLayout.astro` (must stay before the stylesheet to avoid a flash) and the toggle
   script in `Nav.astro`. Don't add more without a good reason.
@@ -73,14 +75,14 @@ and post route both read from the collection automatically.
 
 ## Palette
 
-| Variable | Dark (gruvbox-dark-hard) | Light (gruvbox-light-hard) |
+| Variable | Light, default (ink on paper) | Dark (gruvbox-dark-hard) |
 |---|---|---|
-| `--bg` | `#1d2021` | `#f9f5d7` |
-| `--bg-soft` | `#282828` | `#fbf1c7` |
-| `--fg` | `#ebdbb2` | `#3c3836` |
-| `--muted` | `#a89984` | `#7c6f64` |
-| `--accent` | `#fabd2f` | `#b57614` |
-| `--border` | `#3c3836` | `#ebdbb2` |
+| `--bg` | `#fafaf7` | `#1d2021` |
+| `--bg-soft` | `#f0efe9` | `#282828` |
+| `--fg` | `#1c1b19` | `#ebdbb2` |
+| `--muted` | `#6b6660` | `#a89984` |
+| `--accent` | `#9a5b00` | `#fabd2f` |
+| `--border` | `#e0ddd5` | `#3c3836` |
 - Commit as `Robert Stenbom <7187639+TransitoryBliss@users.noreply.github.com>`, matching the
   other TransitoryBliss repos.
 
