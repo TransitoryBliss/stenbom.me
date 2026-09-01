@@ -2,18 +2,35 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="About" description="About Robert Stenbom.">
-	<h1>Robert Stenbom</h1>
+<BaseLayout title="About" description="Who Robert Stenbom is, and why this site looks so plain.">
+	<h1>About</h1>
 	<p>
-		I'm Robert. I've been writing code for over 20 years, and this year marks 20 years of doing it professionally. I'm currently chief architect at <a href="https://www.ingrid.com/">Ingrid</a>, a role I started at the beginning of 2025.
+		I'm Robert. I've been writing code for over 20 years, and this year marks 20 of doing it for money. Right now I'm chief architect at <a href="https://www.ingrid.com/">Ingrid</a>, a job I started at the beginning of 2025.
 	</p>
 	<p>
-		Before that I spent about ten years as a CTO across two companies. The first was Advinans, which got acquired by Nordea and became <a href="https://nordeanode.se/">Nordea Node</a>. I stayed there for around seven years, watching a small company turn into part of a bank.
+		Before that I spent about ten years as a CTO at two companies. The first was Advinans, which got bought by Nordea and became <a href="https://nordeanode.se/">Nordea Node</a>. I stayed around seven years and watched a small company turn into part of a bank.
 	</p>
 	<p>
-		This site is mostly a technical blog. I like writing from time to time, not because anyone asked, but because it's a good way to work out what I actually think about something. If a post turns out useful to someone else too, that's a bonus.
+		This site is mostly a technical blog. I write from time to time. Nobody asked me to. It's just the best way I know to find out what I actually think about something. If a post is useful to someone else too, that's a bonus.
+	</p>
+
+	<h2>Why the site looks like this</h2>
+	<p>
+		Yes, it's plain. No hero image, no sidebar, nothing that moves. That's on purpose.
 	</p>
 	<p>
-		You can find my code on <a href="https://github.com/TransitoryBliss">GitHub</a>, or read the <a href="/">blog</a>.
+		I like typography, and I have a hard time concentrating when I read. Long lines, small text and grey on white make me lose my place and start skimming. So I set this site up for my own eyes. It turns out that what helps me is mostly what the research says helps everyone.
+	</p>
+	<p>
+		The text is 20 pixels on a desktop screen, with about 65 characters per line and one full line of space between paragraphs. The typeface is Source Serif, which was drawn for reading on screens. Dark text on a light background is the default because that's what people read fastest in tests, and there's a Dark button in the corner if you disagree. Longer posts get a table of contents so you can jump to the part you came for.
+	</p>
+	<p>
+		The first version didn't look like this. It had a dark gruvbox theme and a monospace font, because I spend my days in a terminal and I thought it looked great. It did look great. I just couldn't read it. Every version after that fixed one thing, and I still caught myself skimming my own posts. So I threw it all out and started again from what's known about reading instead of what I like looking at.
+	</p>
+	<p>
+		Most of the numbers come from Matthew Butterick's <a href="https://practicaltypography.com/">Practical Typography</a>. The rest is in the site's <a href="https://github.com/TransitoryBliss/stenbom.me">source</a>, if you want to see how little there is.
+	</p>
+	<p>
+		You can find my code on <a href="https://github.com/TransitoryBliss">GitHub</a>, or go read the <a href="/">blog</a>.
 	</p>
 </BaseLayout>
