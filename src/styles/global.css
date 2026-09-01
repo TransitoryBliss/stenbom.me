@@ -30,12 +30,47 @@
 	src: url('/fonts/iAWriterMonoS-BoldItalic.woff2') format('woff2');
 }
 
+/* iA Writer Quattro: four glyph widths, reads like proportional text but keeps the typewriter look. Used for prose. */
+@font-face {
+	font-family: 'iA Writer Quattro';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('/fonts/iAWriterQuattroS-Regular.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'iA Writer Quattro';
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url('/fonts/iAWriterQuattroS-Bold.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'iA Writer Quattro';
+	font-style: italic;
+	font-weight: 400;
+	font-display: swap;
+	src: url('/fonts/iAWriterQuattroS-Italic.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'iA Writer Quattro';
+	font-style: italic;
+	font-weight: 700;
+	font-display: swap;
+	src: url('/fonts/iAWriterQuattroS-BoldItalic.woff2') format('woff2');
+}
+
 /* Gruvbox dark hard is the default; light is opted into via data-theme="light" on <html>. */
 :root {
 	color-scheme: dark;
 	--font-mono: 'iA Writer Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
-	--font-body: var(--font-mono);
-	--measure: 72ch;
+	--font-prose: 'iA Writer Quattro', var(--font-mono);
+	--font-body: var(--font-prose);
+	/* ~65 characters of Quattro per line; rem-based so it doesn't shrink with smaller font sizes. */
+	--measure: 42rem;
 	--bg: #1d2021; /* bg0_h */
 	--bg-soft: #282828; /* bg0 */
 	--fg: #ebdbb2; /* fg1 */
@@ -67,8 +102,8 @@ body {
 	background: var(--bg);
 	color: var(--fg);
 	font-family: var(--font-body);
-	font-size: 1rem;
-	line-height: 1.6;
+	font-size: 1.0625rem;
+	line-height: 1.7;
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
@@ -92,6 +127,7 @@ main {
 }
 
 .site-nav {
+	font-family: var(--font-mono);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -154,6 +190,7 @@ footer {
 
 /* Font size on the <p>, not the footer, so the footer's 72ch measure matches main's. */
 footer p {
+	font-family: var(--font-mono);
 	font-size: 0.9rem;
 }
 
@@ -161,6 +198,7 @@ h1,
 h2,
 h3,
 h4 {
+	font-family: var(--font-mono);
 	line-height: 1.25;
 	font-weight: 700;
 	margin-top: 2em;
@@ -274,6 +312,7 @@ html[data-theme='light'] .astro-code span {
 
 .post-list time,
 .post-meta {
+	font-family: var(--font-mono);
 	display: block;
 	color: var(--muted);
 	font-size: 0.9rem;
@@ -281,6 +320,7 @@ html[data-theme='light'] .astro-code span {
 }
 
 .post-header time {
+	font-family: var(--font-mono);
 	color: var(--muted);
 	font-size: 0.95rem;
 }
