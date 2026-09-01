@@ -13,16 +13,16 @@ reading (Source Serif 4, light default, dark toggle), deployed to GitHub Pages a
 
 | Path | Notes |
 |---|---|
-| `src/pages/index.astro` | About / home page. |
-| `src/pages/blog/index.astro` | Blog index — lists all posts, newest first. |
+| `src/pages/index.astro` | Front page: the blog index — lists all posts, newest first. |
+| `src/pages/about.astro` | About page (`/about/`). |
 | `src/pages/blog/[slug].astro` | Renders a single post from the `blog` content collection. Sorts posts in `getStaticPaths` and passes `newer`/`older` for the post-nav; renders reading time, a table of contents (only when the post has ≥3 H2s), and previous/next links. |
 | `src/lib/readingTime.ts` | `readingTime(body)` → whole minutes at ~230 wpm. Used by the index and post header. |
 | `src/content/blog/*.md` | Post content. Frontmatter: `title`, `description`, `date`. |
 | `src/content.config.ts` | Schema for the `blog` collection. |
 | `src/layouts/BaseLayout.astro` | Shared HTML shell: nav, `<slot />`, footer. Imports the Fontsource CSS for Source Serif 4 and holds the inline `<head>` script that sets `data-theme` before first paint. |
-| `src/components/Nav.astro` | Site nav (Home, Blog) plus the Dark/Light theme toggle and its script. |
+| `src/components/Nav.astro` | Site nav (Blog, About) plus the Dark/Light theme toggle and its script. "Blog" is active on `/` and under `/blog/`. |
 | `src/styles/global.css` | The one stylesheet. Palette as CSS variables, typography rules, Shiki dual-theme selectors, styles for `.toc` and `.post-nav`. No framework. |
-| `astro.config.mjs` | Sets Shiki to dual themes `github-light` / `github-dark` with `defaultColor: false`. |
+| `astro.config.mjs` | Sets Shiki to dual themes `github-light` / `github-dark` with `defaultColor: false`. Redirects `/blog` → `/` (the index used to live there). |
 | `public/CNAME` | Custom domain for GitHub Pages (`stenbom.me`). Don't remove. |
 | `.github/workflows/deploy.yml` | Builds with `withastro/action` and deploys via `actions/deploy-pages` on push to `main`. |
 

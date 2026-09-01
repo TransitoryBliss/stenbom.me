@@ -1,6 +1,6 @@
 # stenbom.me
 
-Robert Stenbom's personal site — a short about page and a technical blog. Built with
+Robert Stenbom's personal site — a technical blog on the front page and a short about page. Built with
 [Astro](https://astro.build), deployed to GitHub Pages.
 
 Set in [Source Serif 4](https://github.com/adobe-fonts/source-serif) (self-hosted via
