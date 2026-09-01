@@ -24,5 +24,28 @@ function isActive(href: string) {
 				</li>
 			))
 		}
+		<li>
+			<button class="theme-toggle" type="button" aria-label="Switch to light theme">[light]</button>
+		</li>
 	</ul>
 </nav>
+
+<script>
+	const btn = document.querySelector<HTMLButtonElement>('.theme-toggle');
+	const root = document.documentElement;
+
+	function sync() {
+		if (!btn) return;
+		const dark = root.dataset.theme !== 'light';
+		btn.textContent = dark ? '[light]' : '[dark]';
+		btn.setAttribute('aria-label', `Switch to ${dark ? 'light' : 'dark'} theme`);
+	}
+
+	btn?.addEventListener('click', () => {
+		root.dataset.theme = root.dataset.theme === 'light' ? 'dark' : 'light';
+		localStorage.setItem('theme', root.dataset.theme);
+		sync();
+	});
+
+	sync();
+</script>

@@ -1,25 +1,57 @@
-:root {
-	color-scheme: light dark;
-	--font-body: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-	--font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-	--measure: 68ch;
-	--bg: #ffffff;
-	--fg: #1a1a1a;
-	--muted: #5f5f5f;
-	--accent: #0b5fff;
-	--border: #e2e2e2;
-	--code-bg: #f4f4f4;
+@font-face {
+	font-family: 'iA Writer Mono';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('/fonts/iAWriterMonoS-Regular.woff2') format('woff2');
 }
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		--bg: #14161a;
-		--fg: #e8e8e8;
-		--muted: #a0a0a0;
-		--accent: #6ea8ff;
-		--border: #2c2f36;
-		--code-bg: #1e2126;
-	}
+@font-face {
+	font-family: 'iA Writer Mono';
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url('/fonts/iAWriterMonoS-Bold.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'iA Writer Mono';
+	font-style: italic;
+	font-weight: 400;
+	font-display: swap;
+	src: url('/fonts/iAWriterMonoS-Italic.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'iA Writer Mono';
+	font-style: italic;
+	font-weight: 700;
+	font-display: swap;
+	src: url('/fonts/iAWriterMonoS-BoldItalic.woff2') format('woff2');
+}
+
+/* Gruvbox dark hard is the default; light is opted into via data-theme="light" on <html>. */
+:root {
+	color-scheme: dark;
+	--font-mono: 'iA Writer Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+	--font-body: var(--font-mono);
+	--measure: 72ch;
+	--bg: #1d2021; /* bg0_h */
+	--bg-soft: #282828; /* bg0 */
+	--fg: #ebdbb2; /* fg1 */
+	--muted: #a89984; /* gray */
+	--accent: #fabd2f; /* yellow */
+	--border: #3c3836; /* bg1 */
+}
+
+html[data-theme='light'] {
+	color-scheme: light;
+	--bg: #f9f5d7; /* bg0_h */
+	--bg-soft: #fbf1c7; /* bg0 */
+	--fg: #3c3836; /* fg1 */
+	--muted: #7c6f64; /* gray */
+	--accent: #b57614; /* yellow */
+	--border: #ebdbb2; /* bg1 */
 }
 
 * {
@@ -35,8 +67,8 @@ body {
 	background: var(--bg);
 	color: var(--fg);
 	font-family: var(--font-body);
-	font-size: 1.125rem;
-	line-height: 1.65;
+	font-size: 1rem;
+	line-height: 1.6;
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
@@ -92,6 +124,25 @@ main {
 	color: var(--accent);
 }
 
+.theme-toggle {
+	font: inherit;
+	color: var(--muted);
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+	color: var(--accent);
+}
+
+.theme-toggle:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 2px;
+}
+
 footer {
 	border-top: 1px solid var(--border);
 	padding-top: 1rem;
@@ -105,8 +156,25 @@ h2,
 h3,
 h4 {
 	line-height: 1.25;
+	font-weight: 700;
 	margin-top: 2em;
 	margin-bottom: 0.5em;
+}
+
+h1 {
+	font-size: 1.6rem;
+}
+
+h2 {
+	font-size: 1.3rem;
+}
+
+h3 {
+	font-size: 1.1rem;
+}
+
+h4 {
+	font-size: 1rem;
 }
 
 h1:first-child,
@@ -141,22 +209,40 @@ blockquote {
 
 code {
 	font-family: var(--font-mono);
-	background: var(--code-bg);
-	padding: 0.15em 0.35em;
+	background: var(--bg-soft);
+	border: 1px solid var(--border);
+	padding: 0.1em 0.3em;
 	border-radius: 3px;
-	font-size: 0.9em;
 }
 
 pre {
-	background: var(--code-bg);
+	background: var(--bg-soft);
+	border: 1px solid var(--border);
 	padding: 1rem;
-	border-radius: 6px;
+	border-radius: 4px;
 	overflow-x: auto;
 }
 
 pre code {
 	background: none;
+	border: none;
 	padding: 0;
+}
+
+/* Shiki dual themes (defaultColor: false): pick the variable matching the active theme. */
+.astro-code,
+.astro-code span {
+	color: var(--shiki-dark);
+}
+
+html[data-theme='light'] .astro-code,
+html[data-theme='light'] .astro-code span {
+	color: var(--shiki-light);
+}
+
+/* Shiki's gruvbox-dark-hard bg equals the page bg; force the softer surface so blocks stand out. */
+.astro-code {
+	background: var(--bg-soft) !important;
 }
 
 .post-list {
@@ -176,8 +262,8 @@ pre code {
 
 .post-list a {
 	text-decoration: none;
-	font-size: 1.15rem;
-	font-weight: 600;
+	font-size: 1.1rem;
+	font-weight: 700;
 }
 
 .post-list time,

@@ -16,6 +16,17 @@ const pageTitle = title === 'stenbom.me' ? title : `${title} · stenbom.me`;
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<script is:inline>
+			document.documentElement.dataset.theme =
+				localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
+		</script>
+		<link
+			rel="preload"
+			href="/fonts/iAWriterMonoS-Regular.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="description" content={description} />
 		<meta name="generator" content={Astro.generator} />
