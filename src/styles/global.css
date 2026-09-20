@@ -178,6 +178,26 @@ img {
 	height: auto;
 }
 
+/* Images with a caption: ![alt](src "caption") via src/lib/remark-figure.mjs */
+figure {
+	margin: 0 0 1.5em;
+}
+
+figure img {
+	display: block;
+	border: 1px solid var(--border);
+	border-radius: 4px;
+}
+
+figcaption {
+	margin-top: 0.5em;
+	font-family: var(--font-mono);
+	font-size: 0.85em;
+	font-style: italic;
+	line-height: 1.4;
+	color: var(--muted);
+}
+
 strong {
 	font-weight: 700;
 }
