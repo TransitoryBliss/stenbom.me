@@ -93,7 +93,7 @@ repo() {
 
 `repo atlas` jumps straight there if only one repo matches, and opens the picker otherwise.
 
-<!-- IMAGE: `repo` in a terminal: the fzf list over ghq repos, one match highlighted -->
+![The repo function in a terminal: fzf lists four repos from ghq, filtered down by typing "st", with stenbom.me highlighted](/images/my-dev-environment/repo-finder-fzf.png)
 
 The layout also does a second job that I didn't plan for, which is the next section.
 
@@ -179,7 +179,7 @@ plan, plannotator opens it in the browser, and I annotate it before anything is 
 There's no browser in the VM, so it serves on a fixed port and `make vm/ssh` forwards it to
 the Mac. On WSL, Windows already forwards localhost.
 
-<!-- IMAGE: plannotator plan review in the browser, an annotation on one step -->
+![A plan open for review in plannotator in the browser](/images/my-dev-environment/planannotator.png)
 
 On top of pi there's a handful of add-ons: pi-subagents for handing off bounded work,
 rpiv-ask-user-question so the agent asks me a structured question instead of guessing,
@@ -187,7 +187,7 @@ pi-mcp-adapter for MCP servers, and pi-playwright for a browser. The Playwright 
 come from Nix, and the CLI is pinned to the release that wants exactly that Chromium. More
 on that below.
 
-<!-- IMAGE: pi in a herdr pane with an ask-user-question prompt open -->
+![pi in a herdr pane, asking which comment backend to use with four options to pick from; herdr's sidebar on the left lists the spaces and the running agents](/images/my-dev-environment/ai-question-answer.png)
 
 Not all of this is in Nix, and I want to be honest about the boundary. `pi install` writes
 `~/.pi/agent/settings.json`, and pi rewrites that same file at runtime when you change the
@@ -202,7 +202,7 @@ not a dead SSH session. [herdr](https://herdr.dev) is a terminal multiplexer bui
 a server that keeps the panes alive, with a sidebar that knows about agents and long-running
 commands.
 
-<!-- IMAGE: herdr with an agent pane running, sidebar showing a slow command, a toast -->
+![herdr with several panes open and the sidebar showing the running agents](/images/my-dev-environment/general-setup.png)
 
 Two plugins make it feel like mine. herdr-ohmyzsh adds `hsplit`, `htab` and `hagent` as
 shell commands, shows any command that took more than ten seconds in the sidebar with a
