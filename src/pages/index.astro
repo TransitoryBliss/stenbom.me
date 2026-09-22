@@ -1,19 +1,34 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { readingTime } from '../lib/readingTime';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
 ---
 
-<BaseLayout title="stenbom.me" description="About Robert Stenbom.">
-	<h1>Robert Stenbom</h1>
-	<p>
-		I'm Robert. I've been writing code for over 20 years, and this year marks 20 years of doing it professionally. I'm currently chief architect at <a href="https://www.ingrid.com/">Ingrid</a>, a role I started at the beginning of 2025.
-	</p>
-	<p>
-		Before that I spent about ten years as a CTO across two companies. The first was Advinans, which got acquired by Nordea and became <a href="https://nordeanode.se/">Nordea Node</a>. I stayed there for around seven years, watching a small company turn into part of a bank.
-	</p>
-	<p>
-		This site is mostly a technical blog. I like writing from time to time, not because anyone asked, but because it's a good way to work out what I actually think about something. If a post turns out useful to someone else too, that's a bonus.
-	</p>
-	<p>
-		You can find my code on <a href="https://github.com/TransitoryBliss">GitHub</a>, or read the <a href="/blog/">blog</a>.
-	</p>
+<BaseLayout title="stenbom.me" description="Technical blog posts by Robert Stenbom.">
+	<h1>Blog</h1>
+	{posts.length === 0 && <p>No posts yet — check back soon.</p>}
+	<ul class="post-list">
+		{
+			posts.map((post) => (
+				<li>
+					<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+					<span class="post-meta">
+						<time datetime={post.data.date.toISOString()}>
+							{post.data.date.toLocaleDateString('en-GB', {
+								year: 'numeric',
+								month: 'long',
+								day: 'numeric',
+							})}
+						</time>
+						{' · '}{readingTime(post.body)} min read
+					</span>
+					<p>{post.data.description}</p>
+				</li>
+			))
+		}
+	</ul>
 </BaseLayout>

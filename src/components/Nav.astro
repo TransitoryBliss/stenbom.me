@@ -1,13 +1,14 @@
 ---
 const links = [
-	{ href: '/', label: 'Home' },
-	{ href: '/blog/', label: 'Blog' },
+	{ href: '/', label: 'Blog' },
+	{ href: '/about/', label: 'About' },
 ];
 
 const path = Astro.url.pathname;
 
 function isActive(href: string) {
-	if (href === '/') return path === '/';
+	// The blog index lives at /, and posts live under /blog/, so both count as "Blog".
+	if (href === '/') return path === '/' || path.startsWith('/blog/');
 	return path.startsWith(href);
 }
 ---
