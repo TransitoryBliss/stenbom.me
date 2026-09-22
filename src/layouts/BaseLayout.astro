@@ -1,0 +1,35 @@
+---
+import Nav from '../components/Nav.astro';
+import '../styles/global.css';
+
+interface Props {
+	title: string;
+	description?: string;
+}
+
+const { title, description = 'Technical blog and notes by Robert Stenbom.' } = Astro.props;
+const pageTitle = title === 'stenbom.me' ? title : `${title} · stenbom.me`;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="description" content={description} />
+		<meta name="generator" content={Astro.generator} />
+		<title>{pageTitle}</title>
+	</head>
+	<body>
+		<header>
+			<Nav />
+		</header>
+		<main>
+			<slot />
+		</main>
+		<footer>
+			<p>&copy; {new Date().getFullYear()} Robert Stenbom</p>
+		</footer>
+	</body>
+</html>
