@@ -25,7 +25,7 @@ function isActive(href: string) {
 			))
 		}
 		<li>
-			<button class="theme-toggle" type="button" aria-label="Switch to light theme">[light]</button>
+			<button class="theme-toggle" type="button" aria-label="Switch to dark theme">[dark]</button>
 		</li>
 	</ul>
 </nav>
@@ -36,7 +36,7 @@ function isActive(href: string) {
 
 	function sync() {
 		if (!btn) return;
-		const dark = root.dataset.theme !== 'light';
+		const dark = root.dataset.theme === 'dark';
 		btn.textContent = dark ? '[light]' : '[dark]';
 		btn.setAttribute('aria-label', `Switch to ${dark ? 'light' : 'dark'} theme`);
 	}
