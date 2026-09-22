@@ -6,8 +6,8 @@ change the site safely.
 ## What this repo is
 
 Robert's personal site: an About page and a technical blog. Built with
-[Astro](https://astro.build), styled with one handwritten stylesheet (ink-on-paper light theme,
-gruvbox dark theme, iA Writer typefaces), deployed to GitHub Pages at `stenbom.me`.
+[Astro](https://astro.build), styled with one handwritten stylesheet built for long-form
+reading (Source Serif 4, light default, dark toggle), deployed to GitHub Pages at `stenbom.me`.
 
 ## Layout
 
@@ -15,14 +15,14 @@ gruvbox dark theme, iA Writer typefaces), deployed to GitHub Pages at `stenbom.m
 |---|---|
 | `src/pages/index.astro` | About / home page. |
 | `src/pages/blog/index.astro` | Blog index — lists all posts, newest first. |
-| `src/pages/blog/[slug].astro` | Renders a single post from the `blog` content collection. |
+| `src/pages/blog/[slug].astro` | Renders a single post from the `blog` content collection. Sorts posts in `getStaticPaths` and passes `newer`/`older` for the post-nav; renders reading time, a table of contents (only when the post has ≥3 H2s), and previous/next links. |
+| `src/lib/readingTime.ts` | `readingTime(body)` → whole minutes at ~230 wpm. Used by the index and post header. |
 | `src/content/blog/*.md` | Post content. Frontmatter: `title`, `description`, `date`. |
 | `src/content.config.ts` | Schema for the `blog` collection. |
-| `src/layouts/BaseLayout.astro` | Shared HTML shell: nav, `<slot />`, footer. Holds the inline `<head>` script that sets `data-theme` before first paint, and the font preload. |
-| `src/components/Nav.astro` | Site nav (Home, Blog) plus the `[light]`/`[dark]` theme toggle and its script. |
-| `src/styles/global.css` | The one stylesheet. Gruvbox palette as CSS variables, `@font-face` for iA Writer Quattro (prose) and Mono (structure/code), Shiki dual-theme selectors. No framework. |
-| `astro.config.mjs` | Sets Shiki to dual themes `github-light` / `gruvbox-dark-hard` with `defaultColor: false`. |
-| `public/fonts/` | Self-hosted iA Writer Quattro and Mono woff2 files (Regular, Bold, Italic, BoldItalic each) and their SIL OFL licences. Keep the licence files next to the fonts. |
+| `src/layouts/BaseLayout.astro` | Shared HTML shell: nav, `<slot />`, footer. Imports the Fontsource CSS for Source Serif 4 and holds the inline `<head>` script that sets `data-theme` before first paint. |
+| `src/components/Nav.astro` | Site nav (Home, Blog) plus the Dark/Light theme toggle and its script. |
+| `src/styles/global.css` | The one stylesheet. Palette as CSS variables, typography rules, Shiki dual-theme selectors, styles for `.toc` and `.post-nav`. No framework. |
+| `astro.config.mjs` | Sets Shiki to dual themes `github-light` / `github-dark` with `defaultColor: false`. |
 | `public/CNAME` | Custom domain for GitHub Pages (`stenbom.me`). Don't remove. |
 | `.github/workflows/deploy.yml` | Builds with `withastro/action` and deploys via `actions/deploy-pages` on push to `main`. |
 
@@ -54,19 +54,22 @@ and post route both read from the collection automatically.
   - `--font-mono` = iA Writer Mono for headings, nav, footer, dates and code.
   Don't add third-party font requests; if you change fonts, self-host them and ship the
   licence.
-- Prose metrics: body `1.0625rem` / line-height `1.5`, paragraph margin `1.5em`, measure
-  `42rem` (~65 characters of Quattro). Keep the paragraph gap equal to or larger than the
-  line height — when it was smaller, paragraphs stopped separating and the page read as one
-  wall of text. Line height stays inside Butterick's 120–145% range (plus a little for
-  Quattro's tall x-height). The measure is in `rem`, not `ch`, so it doesn't shrink for
-  elements with a smaller font-size.
-- Theme: light ("ink on paper": near-black on faint off-white) is always the default,
-  regardless of OS preference. Dark text on a light background reads measurably better for
-  prose (Piepenbrock et al., *Ergonomics* 2013/2014, the "positive polarity advantage"), so
-  don't flip the default back to dark. Dark (gruvbox-dark-hard) is opted into via
-  `data-theme="dark"` on `<html>`, chosen with the nav toggle and remembered in
-  `localStorage` under the key `theme`. Colours live as variables on `:root` (light) and
-  `html[data-theme='dark']` in `global.css` — change values there, not in components.
+- Prose metrics (from reading research, don't drift): body
+  `clamp(1.125rem, 1rem + 0.5vw, 1.25rem)` (18–20px; bigger type helps most, Rello et al.
+  2016), line-height `1.5` (Butterick's 120–145% plus a little for a serif), paragraph
+  margin `1.5em` (one line, so paragraphs separate and the page keeps one rhythm), measure
+  `40rem` (~65 characters, Bringhurst's 45–75). The measure is in `rem`, not `ch`, so it
+  doesn't shrink for elements with a smaller font-size.
+- Theme: light (near-black on warm off-white) is always the default, regardless of OS
+  preference. Dark text on a light background reads measurably better for prose
+  (Piepenbrock et al., *Ergonomics* 2013/2014, the "positive polarity advantage"), so don't
+  flip the default back to dark. Dark is opted into via `data-theme="dark"` on `<html>`,
+  chosen with the nav toggle and remembered in `localStorage` under the key `theme`.
+  Colours live as variables on `:root` (light) and `html[data-theme='dark']` in
+  `global.css` — change values there, not in components.
+- Extras are build-time only: reading time (`src/lib/readingTime.ts`), TOC from Astro's
+  `render()` headings (threshold: 3 H2s), previous/next from the sorted collection. No JS
+  for any of them.
 - The only client-side JS is the theme handling: an `is:inline` script in the `<head>` of
   `BaseLayout.astro` (must stay before the stylesheet to avoid a flash) and the toggle
   script in `Nav.astro`. Don't add more without a good reason.
@@ -75,14 +78,15 @@ and post route both read from the collection automatically.
 
 ## Palette
 
-| Variable | Light, default (ink on paper) | Dark (gruvbox-dark-hard) |
+| Variable | Light (default) | Dark |
 |---|---|---|
-| `--bg` | `#fafaf7` | `#1d2021` |
-| `--bg-soft` | `#f0efe9` | `#282828` |
-| `--fg` | `#1c1b19` | `#ebdbb2` |
-| `--muted` | `#6b6660` | `#a89984` |
-| `--accent` | `#9a5b00` | `#fabd2f` |
-| `--border` | `#e0ddd5` | `#3c3836` |
+| `--bg` | `#fbfaf7` | `#161616` |
+| `--bg-soft` | `#f2f0eb` | `#222222` |
+| `--fg` | `#1a1a1a` | `#dedbd5` |
+| `--muted` | `#5c5a56` | `#9c9994` |
+| `--accent` | `#1b4f8a` | `#8fb8ea` |
+| `--border` | `#e1ded8` | `#333333` |
+
 - Commit as `Robert Stenbom <7187639+TransitoryBliss@users.noreply.github.com>`, matching the
   other TransitoryBliss repos.
 

@@ -1,96 +1,46 @@
-@font-face {
-	font-family: 'iA Writer Mono';
-	font-style: normal;
-	font-weight: 400;
-	font-display: swap;
-	src: url('/fonts/iAWriterMonoS-Regular.woff2') format('woff2');
-}
-
-@font-face {
-	font-family: 'iA Writer Mono';
-	font-style: normal;
-	font-weight: 700;
-	font-display: swap;
-	src: url('/fonts/iAWriterMonoS-Bold.woff2') format('woff2');
-}
-
-@font-face {
-	font-family: 'iA Writer Mono';
-	font-style: italic;
-	font-weight: 400;
-	font-display: swap;
-	src: url('/fonts/iAWriterMonoS-Italic.woff2') format('woff2');
-}
-
-@font-face {
-	font-family: 'iA Writer Mono';
-	font-style: italic;
-	font-weight: 700;
-	font-display: swap;
-	src: url('/fonts/iAWriterMonoS-BoldItalic.woff2') format('woff2');
-}
-
-/* iA Writer Quattro: four glyph widths, reads like proportional text but keeps the typewriter look. Used for prose. */
-@font-face {
-	font-family: 'iA Writer Quattro';
-	font-style: normal;
-	font-weight: 400;
-	font-display: swap;
-	src: url('/fonts/iAWriterQuattroS-Regular.woff2') format('woff2');
-}
-
-@font-face {
-	font-family: 'iA Writer Quattro';
-	font-style: normal;
-	font-weight: 700;
-	font-display: swap;
-	src: url('/fonts/iAWriterQuattroS-Bold.woff2') format('woff2');
-}
-
-@font-face {
-	font-family: 'iA Writer Quattro';
-	font-style: italic;
-	font-weight: 400;
-	font-display: swap;
-	src: url('/fonts/iAWriterQuattroS-Italic.woff2') format('woff2');
-}
-
-@font-face {
-	font-family: 'iA Writer Quattro';
-	font-style: italic;
-	font-weight: 700;
-	font-display: swap;
-	src: url('/fonts/iAWriterQuattroS-BoldItalic.woff2') format('woff2');
-}
-
 /*
- * Light ("ink on paper") is the default: dark text on a light background reads measurably
- * better for prose (positive polarity). Gruvbox dark is opted into via data-theme="dark".
+ * One stylesheet, typography first.
+ *
+ * Numbers come from reading research, not taste:
+ * - dark text on light bg reads better (Piepenbrock et al., Ergonomics 2013/14) → light default
+ * - bigger body type helps most (Rello et al. 2016) → 18–20px fluid
+ * - line-height 120–145% (Butterick) → 1.5 for a serif with descenders
+ * - 45–75 characters per line, ~66 ideal (Bringhurst) → 40rem measure
+ * - paragraph gap = one line so the page keeps one rhythm
  */
+
+/* Metric-matched fallback so the swap from Georgia to Source Serif barely shifts layout. */
+@font-face {
+	font-family: 'Source Serif Fallback';
+	src: local('Georgia');
+	size-adjust: 96%;
+	ascent-override: 92%;
+	descent-override: 26%;
+}
+
 :root {
 	color-scheme: light;
-	--font-mono: 'iA Writer Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
-	--font-prose: 'iA Writer Quattro', var(--font-mono);
-	--font-body: var(--font-prose);
-	/* ~65 characters of Quattro per line; rem-based so it doesn't shrink with smaller font sizes. */
-	--measure: 42rem;
-	--bg: #fafaf7; /* paper: a hair off pure white to avoid glare */
-	--bg-soft: #f0efe9;
-	--fg: #1c1b19; /* ink: near-black, warm */
-	--muted: #6b6660;
-	--accent: #9a5b00; /* warm brown, ~5.2:1 on paper */
-	--border: #e0ddd5;
+	--font-serif: 'Source Serif 4 Variable', 'Source Serif Fallback', Georgia, 'Times New Roman', serif;
+	--font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+	--font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+	/* ~65 characters of Source Serif at 20px. In rem, not ch, so it never shrinks for smaller-font elements. */
+	--measure: 40rem;
+	--bg: #fbfaf7;
+	--bg-soft: #f2f0eb;
+	--fg: #1a1a1a;
+	--muted: #5c5a56;
+	--accent: #1b4f8a;
+	--border: #e1ded8;
 }
 
-/* Gruvbox dark hard. */
 html[data-theme='dark'] {
 	color-scheme: dark;
-	--bg: #1d2021; /* bg0_h */
-	--bg-soft: #282828; /* bg0 */
-	--fg: #ebdbb2; /* fg1 */
-	--muted: #a89984; /* gray */
-	--accent: #fabd2f; /* yellow */
-	--border: #3c3836; /* bg1 */
+	--bg: #161616;
+	--bg-soft: #222222;
+	--fg: #dedbd5; /* not pure white: less bloom on dark */
+	--muted: #9c9994;
+	--accent: #8fb8ea;
+	--border: #333333;
 }
 
 * {
@@ -98,6 +48,8 @@ html[data-theme='dark'] {
 }
 
 html {
+	/* 18px on phones, 20px on desktop. */
+	font-size: clamp(1.125rem, 1rem + 0.5vw, 1.25rem);
 	-webkit-text-size-adjust: 100%;
 }
 
@@ -105,15 +57,17 @@ body {
 	margin: 0;
 	background: var(--bg);
 	color: var(--fg);
-	font-family: var(--font-body);
-	font-size: 1.0625rem;
+	font-family: var(--font-serif);
+	font-optical-sizing: auto;
 	line-height: 1.5;
+	-webkit-font-smoothing: auto;
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
 }
 
-/* Only the page-level shell; nested <header>s (e.g. .post-header) must not get this. */
+/* Page shell only; nested <header>s (e.g. .post-header) must not get this.
+   Explicit left/right padding so it never overrides vertical padding set below. */
 body > header,
 body > main,
 body > footer {
@@ -126,12 +80,160 @@ body > footer {
 
 main {
 	flex: 1;
-	padding-top: 1.5rem;
-	padding-bottom: 3rem;
+	padding-top: 2rem;
+	padding-bottom: 4rem;
+}
+
+/* ---------- Prose ---------- */
+
+p,
+ul,
+ol,
+blockquote,
+pre {
+	margin-top: 0;
+	margin-bottom: 1.5em;
+}
+
+p {
+	text-wrap: pretty;
+	hyphens: auto;
+}
+
+h1,
+h2,
+h3,
+h4 {
+	font-weight: 600;
+	line-height: 1.2;
+	text-wrap: balance;
+	margin-top: 2em;
+	margin-bottom: 0.5em;
+}
+
+h1 {
+	font-size: 2rem;
+	margin-top: 0;
+}
+
+h2 {
+	font-size: 1.5rem;
+}
+
+h3 {
+	font-size: 1.2rem;
+}
+
+h4 {
+	font-size: 1rem;
+}
+
+h1:first-child,
+h2:first-child,
+h3:first-child {
+	margin-top: 0;
+}
+
+a {
+	color: var(--accent);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.15em;
+}
+
+a:hover {
+	text-decoration-thickness: 2px;
+}
+
+ul,
+ol {
+	padding-left: 1.5em;
+}
+
+li {
+	margin-bottom: 0.4em;
+}
+
+li > ul,
+li > ol {
+	margin-top: 0.4em;
+	margin-bottom: 0;
+}
+
+blockquote {
+	border-left: 3px solid var(--border);
+	margin-left: 0;
+	padding-left: 1em;
+	color: var(--muted);
+	font-style: italic;
+}
+
+hr {
+	border: none;
+	border-top: 1px solid var(--border);
+	margin: 2.5em 0;
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+}
+
+strong {
+	font-weight: 700;
+}
+
+/* ---------- Code ---------- */
+
+code {
+	font-family: var(--font-mono);
+	font-size: 0.875em;
+	background: var(--bg-soft);
+	padding: 0.1em 0.3em;
+	border-radius: 3px;
+}
+
+pre {
+	font-size: 0.875rem;
+	line-height: 1.5;
+	padding: 1rem;
+	border-radius: 6px;
+	overflow-x: auto;
+}
+
+pre code {
+	font-size: inherit;
+	background: none;
+	padding: 0;
+}
+
+/* Shiki dual themes (defaultColor: false): pick the variable for the active theme. */
+.astro-code,
+.astro-code span {
+	color: var(--shiki-light);
+}
+
+html[data-theme='dark'] .astro-code,
+html[data-theme='dark'] .astro-code span {
+	color: var(--shiki-dark);
+}
+
+.astro-code {
+	background: var(--bg-soft) !important;
+}
+
+/* ---------- UI chrome: sans, smaller, muted ---------- */
+
+.site-nav,
+.post-meta,
+.post-list time,
+.toc,
+.post-nav,
+footer {
+	font-family: var(--font-sans);
+	font-size: 0.9rem;
 }
 
 .site-nav {
-	font-family: var(--font-mono);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -143,7 +245,7 @@ main {
 }
 
 .site-nav .brand {
-	font-weight: 700;
+	font-weight: 600;
 	text-decoration: none;
 	color: var(--fg);
 }
@@ -151,9 +253,14 @@ main {
 .site-nav ul {
 	list-style: none;
 	display: flex;
+	align-items: center;
 	gap: 1.25rem;
 	margin: 0;
 	padding: 0;
+}
+
+.site-nav li {
+	margin: 0;
 }
 
 .site-nav a {
@@ -192,107 +299,11 @@ footer {
 	color: var(--muted);
 }
 
-/* Font size on the <p>, not the footer, so the footer's 72ch measure matches main's. */
 footer p {
-	font-family: var(--font-mono);
-	font-size: 0.9rem;
+	margin: 0;
 }
 
-h1,
-h2,
-h3,
-h4 {
-	font-family: var(--font-mono);
-	line-height: 1.25;
-	font-weight: 700;
-	margin-top: 2em;
-	margin-bottom: 0.5em;
-}
-
-h1 {
-	font-size: 1.6rem;
-}
-
-h2 {
-	font-size: 1.3rem;
-}
-
-h3 {
-	font-size: 1.1rem;
-}
-
-h4 {
-	font-size: 1rem;
-}
-
-h1:first-child,
-h2:first-child,
-h3:first-child {
-	margin-top: 0;
-}
-
-/* Paragraph gap equals the line height so paragraphs separate but the page keeps one rhythm. */
-p,
-ul,
-ol,
-blockquote,
-pre {
-	margin-top: 0;
-	margin-bottom: 1.5em;
-}
-
-a {
-	color: var(--accent);
-}
-
-a:hover {
-	text-decoration: none;
-}
-
-blockquote {
-	border-left: 3px solid var(--border);
-	margin-left: 0;
-	padding-left: 1rem;
-	color: var(--muted);
-}
-
-code {
-	font-family: var(--font-mono);
-	background: var(--bg-soft);
-	border: 1px solid var(--border);
-	padding: 0.1em 0.3em;
-	border-radius: 3px;
-}
-
-pre {
-	background: var(--bg-soft);
-	border: 1px solid var(--border);
-	padding: 1rem;
-	border-radius: 4px;
-	overflow-x: auto;
-}
-
-pre code {
-	background: none;
-	border: none;
-	padding: 0;
-}
-
-/* Shiki dual themes (defaultColor: false): pick the variable matching the active theme. */
-.astro-code,
-.astro-code span {
-	color: var(--shiki-light);
-}
-
-html[data-theme='dark'] .astro-code,
-html[data-theme='dark'] .astro-code span {
-	color: var(--shiki-dark);
-}
-
-/* Shiki's own bg (white / gruvbox #1d2021) matches the page; force the softer surface so blocks stand out. */
-.astro-code {
-	background: var(--bg-soft) !important;
-}
+/* ---------- Blog index ---------- */
 
 .post-list {
 	list-style: none;
@@ -301,8 +312,9 @@ html[data-theme='dark'] .astro-code span {
 }
 
 .post-list li {
-	padding: 1rem 0;
+	padding: 1.25rem 0;
 	border-bottom: 1px solid var(--border);
+	margin: 0;
 }
 
 .post-list li:first-child {
@@ -310,22 +322,88 @@ html[data-theme='dark'] .astro-code span {
 }
 
 .post-list a {
+	font-size: 1.25rem;
+	font-weight: 600;
 	text-decoration: none;
-	font-size: 1.1rem;
-	font-weight: 700;
 }
 
-.post-list time,
-.post-meta {
-	font-family: var(--font-mono);
+.post-list a:hover {
+	text-decoration: underline;
+}
+
+.post-list .post-meta {
 	display: block;
 	color: var(--muted);
-	font-size: 0.9rem;
-	margin-top: 0.15rem;
+	margin-top: 0.25rem;
 }
 
-.post-header time {
-	font-family: var(--font-mono);
+.post-list p {
+	margin: 0.5rem 0 0;
+}
+
+/* ---------- Single post ---------- */
+
+.post-header {
+	margin-bottom: 2rem;
+}
+
+.post-header .post-meta {
+	display: block;
 	color: var(--muted);
-	font-size: 0.95rem;
+	margin-top: 0.5rem;
+}
+
+.toc {
+	border: 1px solid var(--border);
+	background: var(--bg-soft);
+	border-radius: 6px;
+	padding: 1rem 1.25rem;
+	margin: 0 0 2rem;
+}
+
+.toc-title {
+	margin: 0 0 0.5rem;
+	font-weight: 600;
+	color: var(--muted);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	font-size: 0.8rem;
+}
+
+.toc ol {
+	margin: 0;
+	padding-left: 1.25em;
+}
+
+.toc li {
+	margin-bottom: 0.25em;
+}
+
+.toc a {
+	text-decoration: none;
+}
+
+.toc a:hover {
+	text-decoration: underline;
+}
+
+.post-nav {
+	margin-top: 3rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--border);
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.post-nav a {
+	text-decoration: none;
+}
+
+.post-nav a:hover {
+	text-decoration: underline;
+}
+
+.post-nav .label {
+	color: var(--muted);
 }

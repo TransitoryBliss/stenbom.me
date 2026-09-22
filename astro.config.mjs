@@ -6,7 +6,7 @@ export default defineConfig({
 	site: 'https://stenbom.me',
 	markdown: {
 		shikiConfig: {
-			themes: { dark: 'gruvbox-dark-hard', light: 'github-light' },
+			themes: { light: 'github-light', dark: 'github-dark' },
 			defaultColor: false,
 		},
 	},
