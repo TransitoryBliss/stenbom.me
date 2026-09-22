@@ -54,9 +54,12 @@ and post route both read from the collection automatically.
   - `--font-mono` = iA Writer Mono for headings, nav, footer, dates and code.
   Don't add third-party font requests; if you change fonts, self-host them and ship the
   licence.
-- Prose metrics: body `1.0625rem` / line-height `1.7`, measure `42rem` (~65 characters of
-  Quattro). The measure is in `rem`, not `ch`, so it doesn't shrink for elements with a
-  smaller font-size.
+- Prose metrics: body `1.0625rem` / line-height `1.5`, paragraph margin `1.5em`, measure
+  `42rem` (~65 characters of Quattro). Keep the paragraph gap equal to or larger than the
+  line height — when it was smaller, paragraphs stopped separating and the page read as one
+  wall of text. Line height stays inside Butterick's 120–145% range (plus a little for
+  Quattro's tall x-height). The measure is in `rem`, not `ch`, so it doesn't shrink for
+  elements with a smaller font-size.
 - Theme: dark (gruvbox-dark-hard) is always the default, regardless of OS preference. Light
   (gruvbox-light-hard) is opted into via `data-theme="light"` on `<html>`, chosen with the
   nav toggle and remembered in `localStorage` under the key `theme`. Colours live as
