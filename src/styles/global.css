@@ -74,9 +74,10 @@ body {
 	min-height: 100vh;
 }
 
-header,
-main,
-footer {
+/* Only the page-level shell; nested <header>s (e.g. .post-header) must not get this. */
+body > header,
+body > main,
+body > footer {
 	width: 100%;
 	max-width: var(--measure);
 	margin: 0 auto;
@@ -148,6 +149,10 @@ footer {
 	padding-top: 1rem;
 	padding-bottom: 2rem;
 	color: var(--muted);
+}
+
+/* Font size on the <p>, not the footer, so the footer's 72ch measure matches main's. */
+footer p {
 	font-size: 0.9rem;
 }
 
