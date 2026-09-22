@@ -93,7 +93,7 @@ repo() {
 
 `repo atlas` jumps straight there if only one repo matches, and opens the picker otherwise.
 
-![The repo function in a terminal: fzf lists four repos from ghq, filtered down by typing "st", with stenbom.me highlighted](/images/my-dev-environment/repo-finder-fzf.png)
+![The repo function in a terminal: fzf lists four repos from ghq, filtered down by typing "st", with stenbom.me highlighted](/images/my-dev-environment/repo-finder-fzf.png "repo st: two letters, one match left, Enter to cd there.")
 
 The layout also does a second job that I didn't plan for, which is the next section.
 
@@ -122,7 +122,7 @@ home.devEnv.git = {
 };
 ```
 
-The key part is choosing the *key*, and the trick is to do it by URL. The base rewrites
+The key part is choosing the _key_, and the trick is to do it by URL. The base rewrites
 every way of writing an `acme-corp` URL to an SSH host alias that carries the work key.
 This is the generated `~/.gitconfig` from my machine, with names swapped:
 
@@ -179,7 +179,7 @@ plan, plannotator opens it in the browser, and I annotate it before anything is 
 There's no browser in the VM, so it serves on a fixed port and `make vm/ssh` forwards it to
 the Mac. On WSL, Windows already forwards localhost.
 
-![A plan open for review in plannotator in the browser](/images/my-dev-environment/planannotator.png)
+![A plan open for review in plannotator in the browser](/images/my-dev-environment/plannotator.png "Reviewing a plan in plannotator, tunnelled from the VM to the Mac's browser. Nothing gets edited until I approve it.")
 
 On top of pi there's a handful of add-ons: pi-subagents for handing off bounded work,
 rpiv-ask-user-question so the agent asks me a structured question instead of guessing,
@@ -187,7 +187,7 @@ pi-mcp-adapter for MCP servers, and pi-playwright for a browser. The Playwright 
 come from Nix, and the CLI is pinned to the release that wants exactly that Chromium. More
 on that below.
 
-![pi in a herdr pane, asking which comment backend to use with four options to pick from; herdr's sidebar on the left lists the spaces and the running agents](/images/my-dev-environment/ai-question-answer.png)
+![pi in a herdr pane, asking which comment backend to use with four options to pick from; herdr's sidebar on the left lists the spaces and the running agents](/images/my-dev-environment/ai-question-answer.png "pi asking a structured question instead of guessing. The sidebar on the left is herdr, listing the agents that are running.")
 
 Not all of this is in Nix, and I want to be honest about the boundary. `pi install` writes
 `~/.pi/agent/settings.json`, and pi rewrites that same file at runtime when you change the
@@ -202,7 +202,7 @@ not a dead SSH session. [herdr](https://herdr.dev) is a terminal multiplexer bui
 a server that keeps the panes alive, with a sidebar that knows about agents and long-running
 commands.
 
-![herdr with several panes open and the sidebar showing the running agents](/images/my-dev-environment/general-setup.png)
+![herdr with several panes open and the sidebar showing the running agents](/images/my-dev-environment/general-setup.png "A normal working session in herdr: several panes, and the sidebar keeping track of which agents are busy.")
 
 Two plugins make it feel like mine. herdr-ohmyzsh adds `hsplit`, `htab` and `hagent` as
 shell commands, shows any command that took more than ten seconds in the sidebar with a
@@ -219,8 +219,6 @@ languages it has, `devEnv.languages.go.enable = true`, and Nix installs gopls, g
 golangci-lint and delve. The Neovim config checks `executable()` before enabling any
 server, formatter or linter, so a host without Go skips them silently instead of erroring
 on start. Formatting is conform.nvim, linting is nvim-lint.
-
-<!-- IMAGE: Neovim with gopls diagnostics, catppuccin colours matching the terminal -->
 
 The shell is zsh with Oh My Zsh, plus autosuggestions and syntax highlighting. Up and Down
 search history by what's already typed, so `n` then Up cycles through only the commands
@@ -252,7 +250,7 @@ zsh went into vi mode without anyone asking. zsh picks the vi keymap when `$EDIT
 contains `vi`, and mine is `nvim`. Oh My Zsh then forces emacs mode anyway, so the outcome
 depended on load order. Now the config just says `defaultKeymap = "emacs"`.
 
-Oh My Zsh defines `alias md='mkdir -p'`. zsh expands aliases while *parsing*, so my `md`
+Oh My Zsh defines `alias md='mkdir -p'`. zsh expands aliases while _parsing_, so my `md`
 function didn't fail at runtime, it failed to be defined at all, and the alias won. Writing
 it as `function md` doesn't help either. `unalias md` first. I now check every new shell
 function against `$ZSH/lib/*.zsh`.

@@ -17,6 +17,7 @@ reading (Source Serif 4, light default, dark toggle), deployed to GitHub Pages a
 | `src/pages/about.astro` | About page (`/about/`). |
 | `src/pages/blog/[slug].astro` | Renders a single post from the `blog` content collection. Sorts posts in `getStaticPaths` and passes `newer`/`older` for the post-nav; renders reading time, a table of contents (only when the post has ≥3 H2s), and previous/next links. |
 | `src/lib/readingTime.ts` | `readingTime(body)` → whole minutes at ~230 wpm. Used by the index and post header. |
+| `src/lib/remark-figure.mjs` | Remark plugin: a paragraph holding only `![alt](src "caption")` becomes `<figure><img><figcaption>caption</figcaption></figure>`. Images without a title are left alone. Registered in `astro.config.mjs`. |
 | `src/content/blog/*.md` | Post content. Frontmatter: `title`, `description`, `date`. |
 | `src/content.config.ts` | Schema for the `blog` collection. |
 | `src/layouts/BaseLayout.astro` | Shared HTML shell: nav, `<slot />`, footer. Imports the Fontsource CSS for Source Serif 4 and holds the inline `<head>` script that sets `data-theme` before first paint. |
@@ -42,6 +43,16 @@ Post body in Markdown.
 
 The slug is the filename without extension. No other file needs to change — the blog index
 and post route both read from the collection automatically.
+
+Images go in `public/images/<slug>/`. Give each one an alt text (what's in the picture, for
+screen readers) and a title, which becomes the visible caption under it:
+
+```markdown
+![herdr with two panes and the sidebar open](/images/my-post/herdr.png "What the caption says.")
+```
+
+There is no image pipeline; export screenshots at a sensible size (≤ ~2000px wide) before
+adding them.
 
 ## Rules
 
