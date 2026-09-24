@@ -11,8 +11,8 @@
 
 /* Metric-matched fallback so the swap from Georgia to Source Serif barely shifts layout. */
 @font-face {
-	font-family: 'Source Serif Fallback';
-	src: local('Georgia');
+	font-family: "Source Serif Fallback";
+	src: local("Georgia");
 	size-adjust: 96%;
 	ascent-override: 92%;
 	descent-override: 26%;
@@ -20,9 +20,13 @@
 
 :root {
 	color-scheme: light;
-	--font-serif: 'Source Serif 4 Variable', 'Source Serif Fallback', Georgia, 'Times New Roman', serif;
-	--font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-	--font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+	--font-serif:
+		"Source Serif 4 Variable", "Source Serif Fallback", Georgia,
+		"Times New Roman", serif;
+	--font-sans:
+		system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+	--font-mono:
+		ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 	/* ~65 characters of Source Serif at 20px. In rem, not ch, so it never shrinks for smaller-font elements. */
 	--measure: 40rem;
 	--bg: #fbfaf7;
@@ -33,7 +37,7 @@
 	--border: #e1ded8;
 }
 
-html[data-theme='dark'] {
+html[data-theme="dark"] {
 	color-scheme: dark;
 	--bg: #161616;
 	--bg-soft: #222222;
@@ -67,7 +71,7 @@ body {
 }
 
 /* Page shell only; nested <header>s (e.g. .post-header) must not get this.
-   Explicit left/right padding so it never overrides vertical padding set below. */
+	 Explicit left/right padding so it never overrides vertical padding set below. */
 body > header,
 body > main,
 body > footer {
@@ -192,7 +196,7 @@ figure img {
 figcaption {
 	margin-top: 0.5em;
 	font-family: var(--font-mono);
-	font-size: 0.85em;
+	font-size: 0.65em;
 	font-style: italic;
 	line-height: 1.4;
 	color: var(--muted);
@@ -232,8 +236,8 @@ pre code {
 	color: var(--shiki-light);
 }
 
-html[data-theme='dark'] .astro-code,
-html[data-theme='dark'] .astro-code span {
+html[data-theme="dark"] .astro-code,
+html[data-theme="dark"] .astro-code span {
 	color: var(--shiki-dark);
 }
 
@@ -248,6 +252,8 @@ html[data-theme='dark'] .astro-code span {
 .post-list time,
 .toc,
 .post-nav,
+.comments,
+.quote-link,
 footer {
 	font-family: var(--font-sans);
 	font-size: 0.9rem;
@@ -289,11 +295,12 @@ footer {
 }
 
 .site-nav a:hover,
-.site-nav a[aria-current='page'] {
+.site-nav a[aria-current="page"] {
 	color: var(--accent);
 }
 
-.theme-toggle {
+.theme-toggle,
+.comments-load {
 	font: inherit;
 	color: var(--muted);
 	background: none;
@@ -303,11 +310,14 @@ footer {
 }
 
 .theme-toggle:hover,
-.theme-toggle:focus-visible {
+.theme-toggle:focus-visible,
+.comments-load:hover,
+.comments-load:focus-visible {
 	color: var(--accent);
 }
 
-.theme-toggle:focus-visible {
+.theme-toggle:focus-visible,
+.comments-load:focus-visible {
 	outline: 2px solid var(--accent);
 	outline-offset: 2px;
 }
@@ -426,4 +436,91 @@ footer p {
 
 .post-nav .label {
 	color: var(--muted);
+}
+
+/* ---------- Comments (giscus) ---------- */
+
+.comments {
+	margin-top: 3rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--border);
+}
+
+.comments-title {
+	margin: 0 0 0.5rem;
+	font-family: var(--font-sans);
+	font-weight: 600;
+	color: var(--muted);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	font-size: 0.8rem;
+}
+
+.comments-note {
+	color: var(--muted);
+	margin-bottom: 1rem;
+}
+
+/* Feedback after a ¶ click; the reader lands here, so the confirmation lives here too. */
+.comments-quote {
+	border: 1px solid var(--accent);
+	background: var(--bg-soft);
+	color: var(--fg);
+	border-radius: 6px;
+	padding: 0.75rem 1rem;
+	margin-bottom: 1rem;
+}
+
+.comments-quote pre {
+	margin: 0.5rem 0 0;
+	white-space: pre-wrap;
+}
+
+.comments-load {
+	text-decoration: underline;
+}
+
+/* Quote-to-comment ¶ links. Injected by JS, so nothing here applies without it.
+	 Sits in the left margin when there is room, inline after the paragraph when not. */
+
+article > p {
+	position: relative;
+}
+
+.quote-link {
+	position: absolute;
+	left: -1.75rem;
+	top: 0;
+	font-size: 0.9rem;
+	line-height: inherit;
+	color: var(--muted);
+	background: none;
+	border: none;
+	padding: 0 0.25rem;
+	cursor: pointer;
+	opacity: 0;
+	transition: opacity 120ms ease;
+}
+
+article > p:hover .quote-link,
+.quote-link:focus-visible {
+	opacity: 1;
+}
+
+.quote-link:hover,
+.quote-link:focus-visible {
+	color: var(--accent);
+}
+
+.quote-link:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 2px;
+}
+
+@media (max-width: 48rem) {
+	.quote-link {
+		position: static;
+		margin-left: 0.5rem;
+		opacity: 0.5;
+	}
 }

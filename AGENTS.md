@@ -21,8 +21,9 @@ reading (Source Serif 4, light default, dark toggle), deployed to GitHub Pages a
 | `src/content/blog/*.md` | Post content. Frontmatter: `title`, `description`, `date`. |
 | `src/content.config.ts` | Schema for the `blog` collection. |
 | `src/layouts/BaseLayout.astro` | Shared HTML shell: nav, `<slot />`, footer. Imports the Fontsource CSS for Source Serif 4 and holds the inline `<head>` script that sets `data-theme` before first paint. |
-| `src/components/Nav.astro` | Site nav (Blog, About) plus the Dark/Light theme toggle and its script. "Blog" is active on `/` and under `/blog/`. |
-| `src/styles/global.css` | The one stylesheet. Palette as CSS variables, typography rules, Shiki dual-theme selectors, styles for `.toc` and `.post-nav`. No framework. |
+| `src/components/Nav.astro` | Site nav (Blog, About) plus the Dark/Light theme toggle and its script. "Blog" is active on `/` and under `/blog/`. Dispatches a `themechange` event on `window` after toggling. |
+| `src/components/Comments.astro` | Comments via giscus (GitHub Discussions), one thread per post, rendered after `.post-nav` in `[slug].astro`. Holds the giscus repo/category ids. Nothing from `giscus.app` loads until the reader clicks "Load comments" or a paragraph's `¶` quote link. |
+| `src/styles/global.css` | The one stylesheet. Palette as CSS variables, typography rules, Shiki dual-theme selectors, styles for `.toc`, `.post-nav`, `.comments` and `.quote-link`. No framework. |
 | `astro.config.mjs` | Sets Shiki to dual themes `github-light` / `github-dark` with `defaultColor: false`. Redirects `/blog` → `/` (the index used to live there). |
 | `public/CNAME` | Custom domain for GitHub Pages (`stenbom.me`). Don't remove. |
 | `.github/workflows/deploy.yml` | Builds with `withastro/action` and deploys via `actions/deploy-pages` on push to `main`. |
@@ -58,13 +59,13 @@ adding them.
 
 - Keep the design minimal: one stylesheet, no CSS framework, no client-side JS required for
   navigation. The priority is readability and easy navigation over visual flourish.
-- Two self-hosted fonts from `public/fonts/` (SIL OFL 1.1, both based on IBM Plex Mono):
-  - `--font-prose` = iA Writer Quattro for body text. Plain monospace is measurably harder
-    to read as prose (iA's own research); Quattro keeps the typewriter look but uses four
-    glyph widths so it flows like proportional text. Don't switch body text back to Mono.
-  - `--font-mono` = iA Writer Mono for headings, nav, footer, dates and code.
-  Don't add third-party font requests; if you change fonts, self-host them and ship the
-  licence.
+- Fonts (variables in `global.css`):
+  - `--font-serif` = Source Serif 4 (variable, optical sizing) for everything by default,
+    self-hosted via `@fontsource-variable/source-serif-4`, imported in `BaseLayout.astro`.
+  - `--font-sans` = system sans stack for nav, post meta, TOC, post-nav, comments, footer.
+  - `--font-mono` = `ui-monospace` stack for code.
+  Don't add third-party font requests; if you change fonts, self-host them (Fontsource or
+  `public/fonts/`) and ship the licence.
 - Prose metrics (from reading research, don't drift): body
   `clamp(1.125rem, 1rem + 0.5vw, 1.25rem)` (18–20px; bigger type helps most, Rello et al.
   2016), line-height `1.5` (Butterick's 120–145% plus a little for a serif), paragraph
@@ -84,6 +85,15 @@ adding them.
 - The only client-side JS is the theme handling: an `is:inline` script in the `<head>` of
   `BaseLayout.astro` (must stay before the stylesheet to avoid a flash) and the toggle
   script in `Nav.astro`. Don't add more without a good reason.
+- The one exception, and the only third-party script, is comments (`Comments.astro`):
+  giscus, backed by the repo's GitHub Discussions (category "Announcements", keyed by id so
+  it can be renamed). It is loaded on click only, so a fresh page load makes no request to
+  `giscus.app`. The iframe follows the theme toggle via the `themechange` event and
+  giscus's `setConfig` postMessage. Posts are mapped with `data-mapping="specific"` and
+  `data-term` = the post slug, so renaming a post title or changing the URL doesn't lose
+  its thread; renaming the slug does. Each `article > p` gets a JS-injected `¶` button that
+  copies a markdown quote of the paragraph (with a link to its H2) and scrolls to the box.
+  Moderation is the Discussions UI; commenters need a GitHub account.
 - Code blocks use Shiki dual themes; `global.css` picks `--shiki-dark` or `--shiki-light`
   per theme and forces the block background to `--bg-soft` so it stands out from the page.
 

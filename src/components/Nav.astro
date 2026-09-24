@@ -46,6 +46,8 @@ function isActive(href: string) {
 		root.dataset.theme = root.dataset.theme === 'light' ? 'dark' : 'light';
 		localStorage.setItem('theme', root.dataset.theme);
 		sync();
+		// Anything else that renders in the current theme (e.g. the comments iframe) listens for this.
+		window.dispatchEvent(new CustomEvent('themechange', { detail: root.dataset.theme }));
 	});
 
 	sync();

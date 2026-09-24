@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { readingTime } from '../../lib/readingTime';
+import Comments from '../../components/Comments.astro';
 
 export async function getStaticPaths() {
 	const posts = (await getCollection('blog')).sort(
@@ -70,4 +71,5 @@ const minutes = readingTime(post.body);
 		}
 		<a href="/">All posts</a>
 	</nav>
+	<Comments term={post.id} />
 </BaseLayout>

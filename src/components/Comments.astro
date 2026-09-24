@@ -1,0 +1,188 @@
+---
+/**
+ * Comments via giscus (GitHub Discussions), one thread per post.
+ *
+ * Nothing from giscus.app is requested until the reader clicks "Load comments" (or a
+ * paragraph's ¶ quote link). The iframe follows the site's Dark/Light toggle by listening for
+ * the `themechange` event that Nav.astro dispatches.
+ *
+ * Each paragraph also gets a ¶ button that copies a markdown quote of that paragraph, with a
+ * link back to its section, and scrolls to the comment box. The giscus textarea is
+ * cross-origin so it can't be pre-filled; clipboard + scroll is the best we can do.
+ */
+interface Props {
+	/** Collection entry id (the slug). Used as the giscus term, so it must be stable. */
+	term: string;
+}
+
+const { term } = Astro.props;
+
+// giscus config. Ids from `gh api repos/TransitoryBliss/stenbom.me --jq .node_id` and the
+// Discussions GraphQL API (see plans/comments.md). The category is keyed by id, so it can be
+// renamed in the GitHub UI without touching this.
+const giscus = {
+	repo: 'TransitoryBliss/stenbom.me',
+	repoId: 'R_kgDOG4pO-w',
+	category: 'Announcements',
+	categoryId: 'DIC_kwDOG4pO-84DGKuN',
+};
+---
+
+<section
+	class="comments"
+	id="comments"
+	data-term={term}
+	data-repo={giscus.repo}
+	data-repo-id={giscus.repoId}
+	data-category={giscus.category}
+	data-category-id={giscus.categoryId}
+>
+	<h2 class="comments-title">Comments</h2>
+	<p class="comments-quote" hidden aria-live="polite"></p>
+	<p class="comments-note">
+		Comments are GitHub Discussions and need a GitHub account.
+		<button class="comments-load" type="button">Load comments</button>
+	</p>
+	<div class="giscus"></div>
+</section>
+
+<script>
+	const GISCUS_ORIGIN = 'https://giscus.app';
+	const root = document.documentElement;
+	const section = document.getElementById('comments');
+	const loadBtn = section?.querySelector<HTMLButtonElement>('.comments-load');
+	const quoteStatus = section?.querySelector<HTMLElement>('.comments-quote');
+	const article = document.querySelector('article');
+
+	function currentTheme() {
+		return root.dataset.theme === 'dark' ? 'dark' : 'light';
+	}
+
+	let loaded = false;
+	function loadGiscus() {
+		if (loaded || !section) return;
+		loaded = true;
+		const d = section.dataset;
+		const attrs: Record<string, string> = {
+			'data-repo': d.repo ?? '',
+			'data-repo-id': d.repoId ?? '',
+			'data-category': d.category ?? '',
+			'data-category-id': d.categoryId ?? '',
+			'data-mapping': 'specific',
+			'data-term': d.term ?? '',
+			'data-strict': '1',
+			'data-reactions-enabled': '0',
+			'data-emit-metadata': '0',
+			'data-input-position': 'top',
+			'data-theme': currentTheme(),
+			'data-lang': 'en',
+			'data-loading': 'lazy',
+		};
+		const s = document.createElement('script');
+		s.src = `${GISCUS_ORIGIN}/client.js`;
+		s.async = true;
+		s.crossOrigin = 'anonymous';
+		for (const [k, v] of Object.entries(attrs)) s.setAttribute(k, v);
+		section.appendChild(s);
+		loadBtn?.closest('.comments-note')?.remove();
+	}
+
+	loadBtn?.addEventListener('click', loadGiscus);
+
+	// Re-theme the iframe in place when the nav toggle flips the site theme.
+	window.addEventListener('themechange', () => {
+		const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+		iframe?.contentWindow?.postMessage(
+			{ giscus: { setConfig: { theme: currentTheme() } } },
+			GISCUS_ORIGIN
+		);
+	});
+
+	// ---------- Quote-to-comment links ----------
+
+	function sectionFor(p: HTMLElement): { title: string; url: string } {
+		const base = `${location.origin}${location.pathname}`;
+		let el: Element | null = p.previousElementSibling;
+		while (el && el.tagName !== 'H2') el = el.previousElementSibling;
+		if (el && el.id) return { title: el.textContent?.trim() ?? '', url: `${base}#${el.id}` };
+		const h1 = document.querySelector('.post-header h1');
+		return { title: h1?.textContent?.trim() ?? document.title, url: base };
+	}
+
+	function buildQuote(p: HTMLElement): string {
+		const clone = p.cloneNode(true) as HTMLElement;
+		clone.querySelector('.quote-link')?.remove();
+		const text = (clone.textContent ?? '').replace(/\s+/g, ' ').trim();
+		const excerpt = text.length > 200 ? `${text.slice(0, 200).trimEnd()}…` : text;
+		const { title, url } = sectionFor(p);
+		return `> ${excerpt}\n>\n> — [${title}](${url})\n\n`;
+	}
+
+	async function copyText(text: string): Promise<boolean> {
+		// navigator.clipboard only exists in secure contexts (https / localhost). Fall back to
+		// the old execCommand path so this also works on e.g. `astro dev --host` over a LAN IP.
+		try {
+			if (navigator.clipboard) {
+				await navigator.clipboard.writeText(text);
+				return true;
+			}
+		} catch {
+			/* fall through */
+		}
+		const ta = document.createElement('textarea');
+		ta.value = text;
+		ta.setAttribute('readonly', '');
+		ta.style.position = 'fixed';
+		ta.style.opacity = '0';
+		document.body.appendChild(ta);
+		ta.select();
+		let ok = false;
+		try {
+			ok = document.execCommand('copy');
+		} catch {
+			ok = false;
+		}
+		ta.remove();
+		return ok;
+	}
+
+	function showQuoteStatus(ok: boolean, md: string) {
+		if (!quoteStatus) return;
+		quoteStatus.replaceChildren();
+		if (ok) {
+			quoteStatus.textContent =
+				'Quote copied to your clipboard. Paste it into the comment box below (Ctrl/Cmd+V) to reply to that paragraph.';
+		} else {
+			quoteStatus.append('Couldn’t reach the clipboard. Copy this and paste it into the comment box:');
+			const pre = document.createElement('pre');
+			pre.textContent = md.trim();
+			quoteStatus.append(pre);
+		}
+		quoteStatus.hidden = false;
+	}
+
+	async function quote(p: HTMLElement) {
+		const md = buildQuote(p);
+		const ok = await copyText(md);
+		// The button scrolls out of view immediately, so the only feedback is at the
+		// destination: a status line at the top of the comments section, right above the
+		// giscus input (inputPosition=top). The giscus textarea is in a cross-origin iframe
+		// and giscus has no postMessage for setting its value, so we can't pre-fill it.
+		showQuoteStatus(ok, md);
+		loadGiscus();
+		section?.scrollIntoView({ behavior: 'smooth' });
+	}
+
+	if (article && section) {
+		for (const p of article.querySelectorAll<HTMLElement>(':scope > p')) {
+			const btn = document.createElement('button');
+			btn.type = 'button';
+			btn.className = 'quote-link';
+			btn.textContent = '¶';
+			btn.setAttribute('aria-label', 'Comment on this paragraph');
+			btn.title = 'Copy a quote of this paragraph and go to the comments';
+			btn.addEventListener('click', () => quote(p));
+			p.appendChild(btn);
+		}
+	}
+</script>
