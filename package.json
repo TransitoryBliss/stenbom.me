@@ -14,7 +14,8 @@
   "dependencies": {
     "@astrojs/markdown-satteri": "^0.4.1",
     "@fontsource-variable/source-serif-4": "^5.3.0",
-    "astro": "^7.3.3"
+    "astro": "^7.3.3",
+    "satteri": "^0.10.5"
   },
   "allowScripts": {
     "esbuild": true
